@@ -1,1 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesWeb - Av2</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3b82f6;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        /* Área de Resultado */
+        #resultado {
+            margin-top: 2rem;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Estilização das Fontes Grandes (Notas) */
+        .nota-alta {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #064e3b; /* Verde Escuro */
+        }
+
+        .nota-baixa {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ea580c; /* Laranja */
+        }
+
+        /* Casos Especiais */
+        .erro {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .mensagem-sub {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>DesWeb - Av2</h1>
+        
+        <div class="form-group">
+            <input type="text" id="matriculaInput" placeholder="Digite a matrícula (5 dígitos)" maxlength="5">
+        </div>
+        
+        <button onclick="verificarNota()">Consultar</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        // Base de dados simulada (Matrícula -> Nota)
+        const baseDados = {
+            "12345": 8.5,
+            "23456": 6.2,
+            "34567": 0.0,
+            "45678": 10.0,
+            "56789": 4.5,
+            "98765": 7.0
+        };
+
+        function verificarNota() {
+            const input = document.getElementById("matriculaInput").value.trim();
+            const resultadoDiv = document.getElementById("resultado");
+            
+            // Limpa o resultado anterior
+            resultadoDiv.innerHTML = "";
+
+            // Validação básica do campo de texto
+            if (input.length !== 5 || isNaN(input)) {
+                resultadoDiv.innerHTML = `<p class="erro">Por favor, insira uma matrícula válida de 5 dígitos.</p>`;
+                return;
+            }
+
+            // Verifica se a matrícula existe na base de dados
+            if (baseDados.hasOwnProperty(input)) {
+                const nota = baseDados[input];
+
+                // Caso 1: Nota igual a 0 (S/N + Mensagem da substitutiva)
+                if (nota === 0) {
+                    resultadoDiv.innerHTML = `
+                        <div class="nota-baixa">S/N</div>
+                        <div class="mensagem-sub">Você requereu a sub?</div>
+                    `;
+                } 
+                // Caso 2: Nota maior ou igual a 7.0 (Verde Escuro)
+                else if (nota >= 7.0) {
+                    // Formata a nota para exibir com uma casa decimal (ex: 7,0)
+                    const notaFormatada = nota.toFixed(1).replace('.', ',');
+                    resultadoDiv.innerHTML = `<div class="nota-alta">${notaFormatada}</div>`;
+                } 
+                // Caso 3: Nota abaixo de 7.0 (Laranja)
+                else {
+                    const notaFormatada = nota.toFixed(1).replace('.', ',');
+                    resultadoDiv.innerHTML = `<div class="nota-baixa">${notaFormatada}</div>`;
+                }
+            } 
+            // Caso 4: Matrícula não encontrada
+            else {
+                resultadoDiv.innerHTML = `<p class="erro">Matrícula errada.</p>`;
+            }
+        }
+
+        // Permite pressionar "Enter" no teclado para submeter o formulário
+        document.getElementById("matriculaInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                verificarNota();
+            }
+        });
+    </script>
+
+</body>
+</html>
