@@ -104,10 +104,13 @@
         }
 
         .mensagem-sub {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 0.5rem;
+            font-size: 1.05rem;
+            color: #475569;
+            margin-top: 0.8rem;
             font-style: italic;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 90%;
         }
     </style>
 </head>
@@ -126,14 +129,36 @@
     </div>
 
     <script>
-        // Base de dados simulada (Matrícula -> Nota)
+        // Base de dados atualizada com os feedbacks completos fornecidos
         const baseDados = {
-            "12345": 8.5,
-            "23456": 6.2,
-            "34567": 0.0,
-            "45678": 10.0,
-            "56789": 4.5,
-            "98765": 7.0
+            "16045": { nota: 10, msg: "Muito criativo, parabéns!" },
+            "38202": { nota: 0,  msg: "" },
+            "44069": { nota: 10, msg: "Bem bacana, parabéns!" },
+            "41878": { nota: 7,  msg: "Bonita organização e estética, parabéns. Os links não funcionam." },
+            "42140": { nota: 7,  msg: "Bem diagramado, parabéns. Os links não funcionam. Ficou divertido!" },
+            "41752": { nota: -1, msg: "Venha conversar comigo - envio duplicado" },
+            "39478": { nota: 0,  msg: "" },
+            "42097": { nota: 9,  msg: "Ficou muito bom, poderia ter aproveitado melhor as imagens originais ao invés de emojis" },
+            "42551": { nota: 7,  msg: "Bonita organização e estética, parabéns. Os links não funcionam." },
+            "45220": { nota: 7,  msg: "A interatividade está boa. As imagens estão quebradas" },
+            "45405": { nota: -1, msg: "Venha conversar comigo - envio após o horário" },
+            "42946": { nota: 8,  msg: "Ficou muito bom, poderia ter aproveitado as imagens originais" },
+            "39148": { nota: 10, msg: "Bem bacana, parabéns!" },
+            "39472": { nota: 10, msg: "Mandou bem hein!" },
+            "45124": { nota: 0,  msg: "" },
+            "42174": { nota: 0,  msg: "" },
+            "35384": { nota: 9,  msg: "Ficou muito bom, poderia ter aproveitado as imagens originais" },
+            "38164": { nota: 10, msg: "Excelente, boa estética!" },
+            "39509": { nota: 10, msg: "Ficou criativo, parabéns!" },
+            "38199": { nota: -1, msg: "Venha conversar comigo - URL errada" },
+            "31520": { nota: 10, msg: "Muito bom, bem interativo parabéns!" },
+            "39275": { nota: 8,  msg: "Bom, mas poderia ser melhor. Por exemplo, não aproveitou imagens originais e havia uma imagem quebrada (ref. Errada)" },
+            "45506": { nota: 7,  msg: "Boa estática. Imagens quebradas" },
+            "42093": { nota: 10, msg: "Muito bom e funcional, parabéns!" },
+            "38101": { nota: 10, msg: "Ficou excelente, parabéns!" },
+            "38102": { nota: 7,  msg: "Ficou muito bom, poderia ter trabalhado melhor os cards" },
+            "42961": { nota: 10, msg: "Muito bom e funcional, parabéns!" },
+            "42344": { nota: 9,  msg: "Ficou muito bom, poderia ter aproveitado as imagens originais" }
         };
 
         function verificarNota() {
@@ -151,9 +176,11 @@
 
             // Verifica se a matrícula existe na base de dados
             if (baseDados.hasOwnProperty(input)) {
-                const nota = baseDados[input];
+                const registro = baseDados[input];
+                const nota = registro.nota;
+                let mensagemExibida = registro.msg;
 
-                // Caso 1: Nota igual a 0 (S/N + Mensagem da substitutiva)
+                // Caso 1: Nota igual a 0 (S/N + Mensagem original da substitutiva)
                 if (nota === 0) {
                     resultadoDiv.innerHTML = `
                         <div class="nota-baixa">S/N</div>
@@ -162,14 +189,19 @@
                 } 
                 // Caso 2: Nota maior ou igual a 7.0 (Verde Escuro)
                 else if (nota >= 7.0) {
-                    // Formata a nota para exibir com uma casa decimal (ex: 7,0)
                     const notaFormatada = nota.toFixed(1).replace('.', ',');
-                    resultadoDiv.innerHTML = `<div class="nota-alta">${notaFormatada}</div>`;
+                    resultadoDiv.innerHTML = `
+                        <div class="nota-alta">${notaFormatada}</div>
+                        ${mensagemExibida ? `<div class="mensagem-sub">"${mensagemExibida}"</div>` : ''}
+                    `;
                 } 
-                // Caso 3: Nota abaixo de 7.0 (Laranja)
+                // Caso 3: Nota abaixo de 7.0 (Laranja) - Inclui notas negativas como o -1
                 else {
                     const notaFormatada = nota.toFixed(1).replace('.', ',');
-                    resultadoDiv.innerHTML = `<div class="nota-baixa">${notaFormatada}</div>`;
+                    resultadoDiv.innerHTML = `
+                        <div class="nota-baixa">${notaFormatada}</div>
+                        ${mensagemExibida ? `<div class="mensagem-sub">"${mensagemExibida}"</div>` : ''}
+                    `;
                 }
             } 
             // Caso 4: Matrícula não encontrada
